@@ -462,7 +462,44 @@ static struct block *new_block(struct chain_topology *topo,
 {
 	struct block *b = tal(topo, struct block);
 
-	sha256_double(&b->blkid.shad, &blk->hdr, sizeof(blk->hdr));
+	//sha256_double(&b->blkid.shad, &blk->hdr, sizeof(blk->hdr));
+	//sha256_double(&b->blkid.shad, &blk, sizeof(blk->hdr)+blk->ch_block_sig_len);
+	struct sha256 *sha = &b->blkid.shad.sha;
+	struct sha256_ctx ctx;
+	sha256_init(&ctx);
+		
+		printf("new_block version: %u\n", blk->hdr.version);
+	sha256_update(&ctx, &blk->hdr.version, sizeof(blk->hdr.version));
+		printf("new_block prev_hash: %s\n", type_to_string(tmpctx, struct bitcoin_blkid, &blk->hdr.prev_hash));
+	sha256_update(&ctx, &blk->hdr.prev_hash, sizeof(blk->hdr.prev_hash));
+		printf("new_block merkle_hash: %s\n", type_to_string(tmpctx, struct sha256_double, &blk->hdr.merkle_hash));
+	sha256_update(&ctx, &blk->hdr.merkle_hash, sizeof(blk->hdr.merkle_hash));
+		printf("new_block timestamp: %u\n", blk->hdr.timestamp);
+	sha256_update(&ctx, &blk->hdr.timestamp, sizeof(blk->hdr.timestamp));
+		printf("new_block target: %u\n", blk->hdr.target);
+	sha256_update(&ctx, &blk->hdr.target, sizeof(blk->hdr.target));
+		printf("new_block nonce: %u\n", blk->hdr.nonce);
+	sha256_update(&ctx, &blk->hdr.nonce, sizeof(blk->hdr.nonce));
+		printf("new_block hashStateRoot: %s\n", type_to_string(tmpctx, struct sha256_double, &blk->hdr.hashStateRoot));
+	sha256_update(&ctx, &blk->hdr.hashStateRoot, sizeof(blk->hdr.hashStateRoot));
+		printf("new_block hashUTXORoot: %s\n", type_to_string(tmpctx, struct sha256_double, &blk->hdr.hashUTXORoot));
+	sha256_update(&ctx, &blk->hdr.hashUTXORoot, sizeof(blk->hdr.hashUTXORoot));
+		printf("new_block prevoutStakehash: %s\n", type_to_string(tmpctx, struct sha256_double, &blk->hdr.prevoutStakehash));
+	sha256_update(&ctx, &blk->hdr.prevoutStakehash, sizeof(blk->hdr.prevoutStakehash));
+		printf("new_block prevoutStakeint: %u\n", blk->hdr.prevoutStakeint);
+	sha256_update(&ctx, &blk->hdr.prevoutStakeint, sizeof(blk->hdr.prevoutStakeint));
+		printf("ch_block_sig_len: %u\n", blk->ch_block_sig_len);
+	//sha256_update(&ctx, &blk->ch_block_sig, blk->ch_block_sig_len);
+				uint8_t x = 0;
+	sha256_update(&ctx, &x, sizeof(x));
+		
+	sha256_done(&ctx, sha);
+
+	struct sha256_ctx ctx1;
+	sha256_init(&ctx1);
+	sha256_update(&ctx1, sha, sizeof(struct sha256));
+	sha256_done(&ctx1, sha);
+
 	log_debug(topo->log, "Adding block %u: %s",
 		  height,
 		  type_to_string(tmpctx, struct bitcoin_blkid, &b->blkid));
@@ -507,6 +544,9 @@ static void have_new_block(struct bitcoind *bitcoind UNUSED,
 			   struct chain_topology *topo)
 {
 	/* Unexpected predecessor?  Free predecessor, refetch it. */
+
+	printf("have_new_block blkid: %s\n", type_to_string(tmpctx, struct bitcoin_blkid, &topo->tip->blkid));fflush(stdout);
+	printf("have_new_block prev_hash: %s\n", type_to_string(tmpctx, struct bitcoin_blkid, &blk->hdr.prev_hash));fflush(stdout);
 	if (!structeq(&topo->tip->blkid, &blk->hdr.prev_hash))
 		remove_tip(topo);
 	else
