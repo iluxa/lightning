@@ -34,12 +34,12 @@ struct bitcoin_block *bitcoin_block_from_hex(const tal_t *ctx,
 	printf("version: %d\n", b->hdr.version);
 	printf("nonce: %d\n", b->hdr.nonce);
 	printf("timestamp: %d\n", b->hdr.timestamp);
-	printf("prev_hash: %s\n", type_to_string(ctx, struct bitcoin_blkid, &b->hdr.prev_hash));fflush(stdout);
-	printf("merkle root: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.merkle_hash));
-	printf("hashStateRoot: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.hashStateRoot));
-	printf("hashUTXORoot: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.hashUTXORoot));
-	printf("prevoutStakehash: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.prevoutStakehash));
-	printf("prevoutStakeint: %d\n", b->hdr.prevoutStakeint);
+	//printf("prev_hash: %s\n", type_to_string(ctx, struct bitcoin_blkid, &b->hdr.prev_hash));fflush(stdout);
+	//printf("merkle root: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.merkle_hash));
+	//printf("hashStateRoot: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.hashStateRoot));
+	//printf("hashUTXORoot: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.hashUTXORoot));
+	//printf("prevoutStakehash: %s\n", type_to_string(ctx, struct sha256_double, &b->hdr.prevoutStakehash));
+	//printf("prevoutStakeint: %d\n", b->hdr.prevoutStakeint);
 
 	b->ch_block_sig_len = pull_varint(&p, &len);
 
