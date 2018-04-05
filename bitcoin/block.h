@@ -26,7 +26,7 @@ struct bitcoin_block_hdr {
 
 struct bitcoin_block {
 	struct bitcoin_block_hdr hdr;
-	char ch_block_sig[33+33+6];
+	char ch_block_sig[33+33+6+100]; // XXX
 	u8 ch_block_sig_len;
 	/* tal_count shows now many */
 	struct bitcoin_tx **tx;

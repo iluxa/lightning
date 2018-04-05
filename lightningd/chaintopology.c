@@ -490,8 +490,10 @@ static struct block *new_block(struct chain_topology *topo,
 	sha256_update(&ctx, &blk->hdr.prevoutStakeint, sizeof(blk->hdr.prevoutStakeint));
 		printf("ch_block_sig_len: %u\n", blk->ch_block_sig_len);
 	//sha256_update(&ctx, &blk->ch_block_sig, blk->ch_block_sig_len);
-				uint8_t x = 0;
-	sha256_update(&ctx, &x, sizeof(x));
+    uint8_t x = blk->ch_block_sig_len;
+    sha256_update(&ctx, &x, sizeof(x));
+    sha256_update(&ctx, blk->ch_block_sig, x);
+
 		
 	sha256_done(&ctx, sha);
 
