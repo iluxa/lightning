@@ -1,3 +1,4 @@
+# copy id_rsa and id_rsa.pub to current dir before "docker build"
 FROM ubuntu:17.10
 
 MAINTAINER Ilya Gavrilov <gilyav@gmail.com>
@@ -10,8 +11,8 @@ RUN mkdir /root/.ssh
 COPY ./id_rsa /root/.ssh/id_rsa 
 RUN ssh-keyscan github.com > /root/.ssh/known_hosts
 
-RUN git clone git@github.com:/ihalton/moore --recursive && cd moore && ./autogen.sh && ./configure && make -j`nproc` && make install
+RUN git clone git@github.com:/ihalton/moore --recursive && cd moore && ./autogen.sh && ./configure && make -j`nproc` && make install && cd .. && rm -rf /moore
 
-RUN git clone git@github.com:/iluxa/lightning && cd lightning && git checkout dev && make  && make install #TODO && cd .. && rm -rf /lightning
+RUN git clone git@github.com:/iluxa/lightning && cd lightning && git checkout dev && make && make install #TODO && cd .. && rm -rf /lightning
 
 CMD moored -regtest -daemon -connect=172.17.0.1 && lightningd --network=regtest --log-level=debug --log-file=/lightningd.log --bitcoin-cli moore-cli --bitcoin-rpcport 17556
